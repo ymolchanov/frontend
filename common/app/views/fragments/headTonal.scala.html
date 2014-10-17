@@ -10,12 +10,7 @@
 
                 @fragments.meta.metaInline(content)
 
-                <h1 class="content__headline js-score" itemprop="headline">
-                    @if(content.isAnalysis) {
-                        <span class="content__headline__kicker">Analysis</span>
-                    }
-                    @Html(content.headline)
-                </h1>
+                @fragments.headline(content)
 
                 @if(content.hasTonalHeaderByline && content.hasLargeContributorImage) {
                     @fragments.meta.bylineImage(content)
@@ -47,7 +42,7 @@
     </div>
 
     <div class="tonal__standfirst u-cf">
-        @if(content.standfirst.isDefined) {
+        @if(content.standfirst.isDefined && !content.isEditorial) {
             <div class="gs-container">
                 <div class="content__main-column">
                     @if(!content.delegate.isVideo && !content.delegate.isGallery) {

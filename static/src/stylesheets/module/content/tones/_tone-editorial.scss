@@ -2,12 +2,12 @@
 
 @include tone-content-head(
     editorial, // $tone
-    $c-commentBackground, // $tonal__header-background
-    $c-neutral2, // $tonal__header-text
-    $c-brandBlue, // $tonal__header-link
+    $c-brandDarkBlue, // $tonal__header-background
+    #ffffff, // $tonal__header-text
+    $c-editorialAccent, // $tonal__header-link
     200, // $tonal__headline-weight
-    $c-neutral1, // $tonal__headline-colour
-    $c-brandBlue, // $tonal__headline-accent
+    #ffffff, // $tonal__headline-colour
+    $c-editorialAccent, // $tonal__headline-accent
     $c-brandBlue, // $tonal__standfirst-background
     #ffffff, // $tonal__standfirst-text
     #ffffff // $tonal__standfirst-link
@@ -18,3 +18,17 @@
     #ffffff, // $tonal__article-background
     $c-brandBlue // $tonal__article-link
 );
+
+.tonal__head--tone-editorial {
+    .content__headline {
+        @include fs-headline(4);
+
+        @include mq(mobileLandscape) {
+            @include fs-headline(6, true);
+        }
+    }
+
+    .content__headline__kicker {
+        display: block;
+    }
+}

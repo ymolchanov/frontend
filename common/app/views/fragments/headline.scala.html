@@ -1,0 +1,21 @@
+@(content: model.Content)(implicit request: RequestHeader)
+
+<h1 class="content__headline js-score" itemprop="headline">
+    @if(content.isAnalysis) {
+        <span class="content__headline__kicker">Analysis</span>
+    }
+    @if(content.isEditorial) {
+        @content.standfirst.map { s =>
+            @defining(Edition(request)) { edition =>
+                @withJsoup(BulletCleaner(s))(
+                    InBodyLinkCleaner("in standfirst link")
+                )
+            }
+        }
+        <span class="content__headline__kicker">
+            @Html(content.headline)
+        </span>
+    } else {
+        @Html(content.headline)
+    }
+</h1>

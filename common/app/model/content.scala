@@ -50,7 +50,7 @@ class Content protected (val apiContent: ApiContentWithMeta) extends Trail with 
       case _ => false
     }
   }
-  lazy val hasTonalHeaderByline: Boolean = { visualTone == Tags.VisualTone.Comment && hasSingleContributor }
+  lazy val hasTonalHeaderByline: Boolean = isComment && !isEditorial && hasSingleContributor
   lazy val hasTonalHeaderIllustration: Boolean = isLetters
   lazy val showBylinePic: Boolean = {
     visualTone != Tags.VisualTone.News && hasLargeContributorImage && contributors.length == 1 && !hasTonalHeaderByline
