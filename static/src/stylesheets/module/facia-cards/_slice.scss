@@ -1,6 +1,6 @@
 .facia-slice-wrapper {
-   margin-left: $gs-gutter/2 * -1;
-   margin-right: $gs-gutter/2 * -1;
+    margin-left: $gs-gutter/2 * -1;
+    margin-right: $gs-gutter/2 * -1;
 }
 
 .facia-slice {
@@ -15,15 +15,14 @@
 
 .facia-slice__item {
     position: relative;
-
     padding-bottom: 20px;
-
     margin-bottom: $gs-baseline;
 
     &.facia-slice__item--content-type-gallery,
     &.facia-slice__item--content-type-video {
         padding-bottom: 0;
     }
+
     + .facia-slice__item {
         @include vertical-item-separator;
     }
