@@ -6,7 +6,7 @@
 /* ==========================================================================
    Facia
    ========================================================================== */
-
+@include facia-container-head-common;
 @include facia-container--layout-front;
 
 @import 'module/facia-cards/_l-list';
