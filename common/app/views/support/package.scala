@@ -670,8 +670,12 @@ object ArticleLayout {
 
     lazy val hasSupportingAtBottom: Boolean = {
       val supportingClasses = Set("element--showcase", "element--supporting", "element--thumbnail")
-      val last5els = Jsoup.parseBodyFragment(a.body).select("body > *").takeRight(5)
-      val supportingEls = last5els.find(_.classNames.intersect(supportingClasses).size > 0)
+      var wordCount = 0
+      val lastEls = Jsoup.parseBodyFragment(a.body).select("body > *").reverseIterator.takeWhile{ el =>
+        wordCount += el.text.length
+        wordCount < 1500
+      }
+      val supportingEls = lastEls.find(_.classNames.intersect(supportingClasses).size > 0)
       supportingEls.isDefined
     }
 
@@ -995,18 +999,14 @@ object GetClasses {
   }
 
   private def commonContainerStyles(config: CollectionConfig, isFirst: Boolean, hasTitle: Boolean): Seq[String] = {
-    val isPopular = config.apiQuery.exists { q =>
-      q.contains("show-most-viewed=true") && q.contains("hide-recent-content=true")
-    }
     Seq(
       ("container", true),
       ("container--first", isFirst),
-      ("container--sponsored", (DfpAgent.isSponsored(config) && !isPopular)),
-      ("container--advertisement-feature", (DfpAgent.isAdvertisementFeature(config) && !isPopular)),
-      ("container--foundation-supported", (DfpAgent.isFoundationSupported(config) && !isPopular)),
+      ("container--sponsored", DfpAgent.isSponsored(config)),
+      ("container--advertisement-feature", DfpAgent.isAdvertisementFeature(config)),
+      ("container--foundation-supported", DfpAgent.isFoundationSupported(config)),
       ("js-sponsored-container", (
-        (DfpAgent.isSponsored(config) || DfpAgent.isAdvertisementFeature(config) || DfpAgent.isFoundationSupported(config)) &&
-        !isPopular
+        (DfpAgent.isSponsored(config) || DfpAgent.isAdvertisementFeature(config) || DfpAgent.isFoundationSupported(config))
       )),
       ("js-container--toggle", (!isFirst && hasTitle && !(DfpAgent.isAdvertisementFeature(config) || DfpAgent.isSponsored(config))))
     ) collect {
