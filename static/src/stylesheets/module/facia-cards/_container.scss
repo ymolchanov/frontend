@@ -277,6 +277,12 @@ $header-image-size-desktop: 120px;
     padding-top: $gs-baseline / 4;
     opacity: 1;
     @include transition(opacity .25s linear); // Used to fade-in new updates
+
+    .container--has-toggle & {
+        @include mq(leftCol, wide) {
+            padding-top: gs-height(1);
+        }
+    }
 }
 
 .fc-container__body--is-hidden {
