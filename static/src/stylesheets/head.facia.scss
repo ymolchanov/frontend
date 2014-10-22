@@ -9,15 +9,6 @@
 
 @include facia-container--layout-front;
 
-@import 'module/facia/_supporting';
-@import 'module/facia/_fromage';
-@import 'module/facia/_baguette';
-@import 'module/facia/_saucisson';
-
-@import 'module/containers/_news';
-@import 'module/containers/_tag';
-
-// new FACIA CARDS code
 @import 'module/facia-cards/_l-list';
 @import 'module/facia-cards/_container';
 @import 'module/facia-cards/_slices';

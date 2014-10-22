@@ -1,15 +1,17 @@
 .facia-slice-wrapper {
-    padding-top: $gs-baseline/2;
-    margin-left: $gs-gutter/2 * -1;
-    margin-right: $gs-gutter/2 * -1;
+//     padding-top: $gs-baseline/2;
+//     margin-left: $gs-gutter/2 * -1;
+//     margin-right: $gs-gutter/2 * -1;
 
     + .facia-slice-wrapper {
+/*
         padding-top: 0;
         margin-top: $gs-baseline;
+*/
     }
 
     .show-more--hidden & {
-        display: none;
+//         display: none;
     }
 }
 
