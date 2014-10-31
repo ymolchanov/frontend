@@ -50,7 +50,8 @@ define([
     'common/modules/ui/smartAppBanner',
     'common/modules/ui/tabs',
     'common/modules/ui/toggles',
-    'common/modules/userPrefs'
+    'common/modules/userPrefs',
+    'common/modules/myPopular'
 ], function (
     bean,
     bonzo,
@@ -101,7 +102,8 @@ define([
     smartAppBanner,
     Tabs,
     Toggles,
-    userPrefs
+    userPrefs,
+    myPopular
     ) {
 
     var modules = {
@@ -419,7 +421,22 @@ define([
             initShareCounts: function () {
                 shareCount.init();
 
+            },
+
+            initMyPopularBar: function () {
+                mediator.on('page:common:ready', function () { // makes it happen after page load?
+//                    if (config.page.contentType !== 'Network Front') { // need?
+                    myPopular.log(
+                        config.page.section,
+                        config.page.sectionName,
+                        config.page.keywordIds,// && (config.page.keywordIds + '').split(',').slice(0, 5)
+                        config.page.keywords
+                    );
+//                    }
+                });
+                myPopular.populateBar();
             }
+
         },
         ready = function () {
             modules.initDiscussion();
@@ -455,6 +472,7 @@ define([
             modules.transcludeOnwardContent();
             modules.initReleaseMessage();
             modules.initOpenOverlayOnClick();
+            modules.initMyPopularBar();
 
             mediator.emit('page:common:ready');
         };

@@ -13,7 +13,13 @@
             <div class="navigation__inner">
                 <div class="navigation__scroll">
                     <nav class="navigation__container navigation__container--first" data-component="nav" role="navigation" aria-label="Current section">
-                        @if(!Edition.isEditionFront){
+                        @if(Edition.isEditionFront){
+                            <ul class="history-navigation--hidden">
+                                <li class="js-history-navigation__item">
+                                    <a class="js-history-navigation__action" href="#" data-link-name="nav : secondary : js-history-navigation">js-history-navigation</a>
+                                </li>
+                            </ul>
+                        } else {
                             @fragments.nav.signposting(metaData, navigation)
 
                             @Navigation.topLevelItem(navigation, metaData).map{ topSection =>
