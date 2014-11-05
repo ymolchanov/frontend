@@ -13,7 +13,6 @@
 @import 'item-layouts/fc-item--list-compact';
 @import 'item-layouts/fc-item--list-compact--media';
 @import 'item-layouts/fc-item--list-media';
-@import 'item-layouts/fc-item--list-media-large';
 @import 'item-layouts/fc-item--full';
 @import 'item-layouts/fc-item--mega-full';
 
@@ -77,12 +76,6 @@
 .fc-item--list-media-tablet {
     @include mq(tablet) {
         @include fc-item--list-media;
-    }
-}
-
-.fc-item--list-media-large-tablet {
-    @include mq(tablet) {
-        @include fc-item--list-media-large;
     }
 }
 
@@ -218,4 +211,21 @@
 
 .fc-item--list-compact--media {
     @include fc-item--list-compact--media;
+}
+
+//Live blog items
+.facia-slice--single-col {
+
+    .facia-slice__item {
+        padding-bottom: 0;
+
+        &:before {
+            display: none;
+        }
+    }
+
+    .fc-item {
+        margin-left: 0;
+        margin-right: 0;
+    }
 }
