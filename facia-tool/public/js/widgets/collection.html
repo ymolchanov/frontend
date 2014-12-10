@@ -5,10 +5,10 @@
         <span class="tools" data-bind="visible: state.hasDraft">
             <a class="draft-warning" data-bind="
                 click: front.setModeDraft,
-                visible: front.liveMode()">
+                visible: front.frontMode() === 'live'">
                 <span class="tool draft-warning">Show unlaunched changes</a>
 
-            <span data-bind="visible: !front.liveMode()">
+            <span data-bind="visible: front.frontMode() === 'draft'">
                 <a class="tool draft-publish" data-bind="
                     click: publishDraft">Launch</a>
 
@@ -62,8 +62,15 @@
     </div>
 
     <!-- ko if: !state.collapsed() -->
+        <!-- ko ifnot: front.frontMode() === 'treats' -->
         <div data-bind="
             css: {'pending': isPending()},
             template: {name: 'template_groups', foreach: groups}"></div>
+        <!-- /ko -->
+        <!-- ko if: front.frontMode() === 'treats' -->
+        <div data-bind="
+            css: {'pending': isPending()},
+            template: {name: 'template_groups', data: groups[groups.length - 1]}"></div>
+        <!-- /ko -->
     <!-- /ko -->
 </div>

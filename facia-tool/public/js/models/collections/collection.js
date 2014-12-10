@@ -169,12 +169,11 @@ define([
             remove: {
                 collection: this,
                 item:       item.id(),
-                live:       front.liveMode(),
-                draft:     !front.liveMode()
+                mode:       front.frontMode()
             }
         })
         .then(function() {
-            if (front.liveMode()) {
+            if (front.frontMode() === 'live') {
                 mediator.emit('presser:detectfailures', front.front());
             }
         });
@@ -216,7 +215,7 @@ define([
 
     Collection.prototype.populate = function(rawCollection) {
         var self = this,
-            list;
+            list, mode;
 
         this.raw = rawCollection || this.raw;
 
@@ -227,7 +226,13 @@ define([
                 this.state.hasConcurrentEdits(this.raw.updatedEmail !== config.email && this.state.lastUpdated());
 
             } else if (!rawCollection || this.raw.lastUpdated !== this.state.lastUpdated()) {
-                list = this.front.liveMode() ? this.raw.live : this.raw.draft || this.raw.live || [];
+                mode = this.front.frontMode();
+                if (mode === 'draft') {
+                    list = this.raw.draft || this.raw.live;
+                } else {
+                    list = this.raw[mode];
+                }
+                list = list || [];
 
                 _.each(this.groups, function(group) {
                     group.items.removeAll();

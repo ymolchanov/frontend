@@ -608,8 +608,12 @@ h1 {
     right: 0;
 }
 
-.right-col.live-mode {
+.front-container.live-mode {
     background: #EEFFEE;
+}
+
+.front-container.treats-mode {
+    background: #F2E6F7;
 }
 
 .col__inner {
@@ -631,6 +635,10 @@ h1 {
 
 .modes.draft-mode {
     border-bottom-color: #ffc107;
+}
+
+.modes.treats-mode {
+    border-bottom-color: #830DB3;
 }
 
 .modes a {
@@ -659,6 +667,12 @@ h1 {
 .modes a.live-mode.active:hover {
     color: #ffffff;
     background: #46c430;
+}
+
+.modes a.treats-mode.active,
+.modes a.treats-mode.active:hover {
+    color: #ffffff;
+    background: #830DB3;
 }
 
 .preview {
@@ -692,6 +706,11 @@ h1 {
 .live-mode .article {
     border-color: #EEFFEE;
     background: #EEFFEE;
+}
+
+.treats-mode .article {
+    border-color: #F2E6F7;
+    background: #F2E6F7;
 }
 
 .article:hover,

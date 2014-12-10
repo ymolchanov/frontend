@@ -22,6 +22,17 @@ define(['modules/vars'], function(vars) {
                 edit.id = edit.collection.id;
                 collections.push(edit.collection);
                 delete edit.collection;
+                // TODO remove me if the server is updated to support mode
+                edit.live = edit.mode === 'live';
+                edit.draft = edit.mode === 'draft';
+                edit.treats = edit.mode === 'treats';
+                delete edit.mode;
+                if (edit.treats && edit.itemMeta) {
+                    delete edit.itemMeta.group;
+                    if (_.isEmpty(edit.itemMeta)) {
+                        delete edit.itemMeta;
+                    }
+                }
             }
         });
 

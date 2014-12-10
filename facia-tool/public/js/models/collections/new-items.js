@@ -53,7 +53,7 @@ define([
                 if (restrictHeadlinesOn.indexOf(front) > -1 && (item.meta.headline() || item.fields.headline()).length > maxChars) {
                     err = 'Sorry, a ' + front + ' headline must be ' + maxChars + ' characters or less. Edit it first within the clipboard.';
                 }
-                if (restrictedLiveMode.indexOf(front) > -1 && context.liveMode()) {
+                if (restrictedLiveMode.indexOf(front) > -1 && context.frontMode() === 'live') {
                     err = 'Sorry, ' + front + ' items cannot be added in Live Front mode. Switch to Draft Front then try again.';
                 }
             }
@@ -102,8 +102,7 @@ define([
                 item:     id,
                 position: position,
                 after:    isAfter,
-                live:     targetContext.liveMode(),
-                draft:   !targetContext.liveMode(),
+                mode:     targetContext.frontMode(),
                 itemMeta: _.isEmpty(itemMeta) ? undefined : itemMeta
             };
 
@@ -121,7 +120,7 @@ define([
                 remove: remove
             })
             .then(function () {
-                if (targetContext.liveMode()) {
+                if (targetContext.frontMode() === 'live') {
                     mediator.emit('presser:detectfailures', targetContext.front());
                 }
             });
@@ -152,8 +151,7 @@ define([
                 collection: sourceGroup.parent,
                 id:     sourceGroup.parent.id,
                 item:   id,
-                live:   sourceContext.liveMode(),
-                draft: !sourceContext.liveMode()
+                live:   sourceContext.frontMode()
             };
         }
     }

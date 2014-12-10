@@ -28,27 +28,23 @@ define([
         this.front = ko.observable(frontId);
         this.previousFront = frontId;
         this.frontAge = ko.observable();
-        this.liveMode = ko.observable(false);
+        this.frontMode = ko.observable('draft');
         this.position = params.position;
         this.collections = ko.observableArray();
         this.listeners = listeners;
 
         this.front.subscribe(this.onFrontChange.bind(this));
-        this.liveMode.subscribe(this.onModeChange.bind(this));
+        this.frontMode.subscribe(this.onModeChange.bind(this));
 
         var model = this;
         this.setFront = function(id) {
             model.front(id);
         };
-        this.setModeLive = function() {
-            model.liveMode(true);
-        };
-
-        this.setModeDraft = function() {
-            model.liveMode(false);
+        this.setMode = function(mode) {
+            model.frontMode(mode);
         };
         this.previewUrl = ko.pureComputed(function () {
-            var path = this.liveMode() ? 'http://' + vars.CONST.mainDomain : vars.CONST.previewBase;
+            var path = this.frontMode() !== 'draft' ? 'http://' + vars.CONST.mainDomain : vars.CONST.previewBase;
 
             return vars.CONST.previewBase + '/responsive-viewer/' + path + '/' + this.front();
         }, this);
@@ -214,7 +210,7 @@ define([
 
         this.load(front);
 
-        if (!this.liveMode()) {
+        if (this.frontMode() === 'draft') {
             this.pressDraftFront();
         }
     };
@@ -225,7 +221,7 @@ define([
             collection.populate();
         });
 
-        if (!this.liveMode()) {
+        if (this.frontMode() === 'draft') {
             this.pressDraftFront();
         }
     };
