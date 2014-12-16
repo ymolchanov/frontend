@@ -3,6 +3,9 @@ module.exports = function(grunt, options) {
         allFiles: [
             'static/src/stylesheets'
         ],
+        'facia-tool': [
+            'facia-tool/public/stylesheets'
+        ],
         options: {
             bundleExec: true,
             config: '.scss-lint.yml',

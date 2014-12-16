@@ -113,8 +113,10 @@ object Frontend extends Build with Prototypes {
   val faciaTool = application("facia-tool").dependsOn(commonWithTests).aggregate(common).settings(
     libraryDependencies ++= Seq(
       playJsonVariants
-    )
+    ),
+    sassOptions := Seq()
   )
+  .enablePlugins(PlayScala, net.litola.SassPlugin)
 
   val faciaPress = application("facia-press").dependsOn(commonWithTests)
 
