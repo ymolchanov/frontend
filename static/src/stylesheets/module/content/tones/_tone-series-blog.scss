@@ -1,0 +1,30 @@
+// @include tone-content-icons(series-blog, 'neutral2');
+
+@include tone-content(
+    series-blog, // $tone
+    #ffffff, // $tonal__header-background
+    colour(neutral-2), // $tonal__header-text
+    colour(series-blog-default), // $tonal__header-link
+    400, // $tonal__headline-weight
+    colour(neutral-1), // $tonal__headline-colour
+    colour(series-blog-default), // $tonal__headline-accent
+    #ffffff, // $tonal__standfirst-background
+    colour(neutral-2), // $tonal__standfirst-text
+    colour(series-blog-default), // $tonal__standfirst-link
+    #ffffff, // $tonal__article-background
+    colour(series-blog-default) // $tonal__article-link
+);
+
+.tonal--tone-series-blog {
+    .tonal__main {
+        padding-top: 0;
+    }
+
+    .tonal__standfirst {
+        padding-top: 0;
+
+        .content__standfirst {
+            margin-bottom: $gs-baseline;
+        }
+    }
+}

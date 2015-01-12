@@ -47,6 +47,10 @@ object ItemKicker {
       Some(PodcastKicker(series))
     } else if (trail.isAnalysis) {
       Some(AnalysisKicker)
+    } else if (trail.isRecipe) {
+      Some(RecipeKicker)
+    } else if (trail.isInterview) {
+      Some(InterviewKicker)
     } else if (trail.isReview) {
       Some(ReviewKicker)
     } else if (trail.isCartoon) {
@@ -147,6 +151,34 @@ case object ReviewKicker extends ItemKicker {
   )
 
   override val kickerHtml = "Review"
+
+  override val link = None
+}
+
+case object RecipeKicker extends ItemKicker {
+  override val sublinkClasses = Set(
+    "fc-sublink__kicker"
+  )
+
+  override val linkClasses = Set(
+    "fc-item__kicker"
+  )
+
+  override val kickerHtml = "Recipe"
+
+  override val link = None
+}
+
+case object InterviewKicker extends ItemKicker {
+  override val sublinkClasses = Set(
+    "fc-sublink__kicker"
+  )
+
+  override val linkClasses = Set(
+    "fc-item__kicker"
+  )
+
+  override val kickerHtml = "Interview"
 
   override val link = None
 }

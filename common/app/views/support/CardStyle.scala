@@ -34,10 +34,10 @@ object CardStyle {
       Letters
     } else if (trail.isRecipe) {
       Recipe
-    } else if (trail.isSeriesBlog) {
-      SeriesBlog
     } else if (trail.isInterview) {
       Interview
+    } else if (trail.isSeriesBlog) {
+      SeriesBlog
     } else if (trail.isFeature) {
       Feature
     } else {

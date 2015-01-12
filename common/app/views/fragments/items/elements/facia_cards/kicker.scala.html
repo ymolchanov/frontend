@@ -32,6 +32,14 @@
         <span class="fc-item__kicker @classes.mkString(" ")">Review</span>
     }
 
+    case RecipeKicker => {
+        <span class="fc-item__kicker @classes.mkString(" ")">Recipe</span>
+    }
+
+    case InterviewKicker => {
+        <span class="fc-item__kicker @classes.mkString(" ")">Interview</span>
+    }
+
     case TagKicker(tagName, tagLink, _) => {
         <a href="@LinkTo(tagLink)" data-link-name="kicker" class="fc-item__kicker @classes.mkString(" ")">@Html(tagName)</a>
     }
