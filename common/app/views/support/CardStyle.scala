@@ -32,6 +32,12 @@ object CardStyle {
       Review
     } else if (trail.isLetters) {
       Letters
+    } else if (trail.isRecipe) {
+      Recipe
+    } else if (trail.isSeriesBlog) {
+      SeriesBlog
+    } else if (trail.isInterview) {
+      Interview
     } else if (trail.isFeature) {
       Feature
     } else {
@@ -86,6 +92,18 @@ case object Letters extends CardStyle {
 
 case object ExternalLink extends CardStyle {
   override def toneString: String = "external"
+}
+
+case object Recipe extends CardStyle {
+  override def toneString: String = "recipe"
+}
+
+case object SeriesBlog extends CardStyle {
+  override def toneString: String = "series-blog"
+}
+
+case object Interview extends CardStyle {
+  override def toneString: String = "interview"
 }
 
 case object Default extends CardStyle {

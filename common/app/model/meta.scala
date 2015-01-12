@@ -280,6 +280,9 @@ trait Tags {
     else if (isFeature) Tags.VisualTone.Feature
     else Tags.VisualTone.News
 
+  def isSeriesBlog: Boolean = tags.exists(_.tagType == "series") || 
+    tags.exists({ tag => tag.id != "commentisfree/commentisfree" && tag.tagType == "blog" })
+
   lazy val isLiveBlog: Boolean = tones.exists(t => Tags.liveMappings.contains(t.id))
   lazy val isComment = tones.exists(t => Tags.commentMappings.contains(t.id))
   lazy val isFeature = tones.exists(t => Tags.featureMappings.contains(t.id))
@@ -292,6 +295,8 @@ trait Tags {
   lazy val isCartoon = types.exists(_.id == Tags.Cartoon)
   lazy val isLetters = tones.exists(_.id == Tags.Letters)
   lazy val isCrossword = types.exists(_.id == Tags.Crossword)
+  lazy val isInterview = tones.exists(_.id == Tags.Interview)
+  lazy val isRecipe = tones.exists(_.id == Tags.Recipe)
 
   lazy val hasLargeContributorImage: Boolean = tagsOfType("contributor").filter(_.contributorLargeImagePath.nonEmpty).nonEmpty
 
@@ -308,6 +313,8 @@ object Tags {
   val Editorial = "tone/editorials"
   val Letters = "tone/letters"
   val Podcast = "type/podcast"
+  val Interview = "tone/interview"
+  val Recipe = "tone/recipes"
 
   object VisualTone {
     val Live = "live"
