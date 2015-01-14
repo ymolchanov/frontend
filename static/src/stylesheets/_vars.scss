@@ -114,11 +114,12 @@ $frontend-palette: (
     series-blog-default:    guss-colour(features-main-1, $pasteup-palette),
     series-blog-accent:     guss-colour(features-support-2, $pasteup-palette),
 
-    recipe-default:         guss-colour(features-main-2, $pasteup-palette),
-    recipe-accent:          guss-colour(features-support-3, $pasteup-palette),
+//    recipe-default:         guss-colour(maps-support-4, $pasteup-palette),
+    recipe-default:         #4aa75c,
+    recipe-accent:          guss-colour(news-support-5, $pasteup-palette),
 
-    interview-default:      guss-colour(comment-support-4, $pasteup-palette),
-    interview-accent:       guss-colour(comment-main-2, $pasteup-palette),
+    interview-default:      guss-colour(features-support-2, $pasteup-palette),
+    interview-accent:       guss-colour(features-support-3, $pasteup-palette),
 
     crosswordAccent1:       guss-colour(multimedia-support-1, $pasteup-palette),
     crosswordAccent2:       guss-colour(news-main-2, $pasteup-palette),

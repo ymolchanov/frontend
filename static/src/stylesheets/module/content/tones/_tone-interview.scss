@@ -1,32 +1,16 @@
-// @include tone-content-icons(interview, 'neutral2');
+@include tone-content-icons(feature, 'white');
 
 @include tone-content(
     interview, // $tone
-    colour(neutral-7), // $tonal__header-background
-    colour(neutral-2), // $tonal__header-text
-    colour(interview-default), // $tonal__header-link
-    400, // $tonal__headline-weight
-    colour(neutral-1), // $tonal__headline-colour
-    colour(interview-default), // $tonal__headline-accent
-    colour(neutral-6), // $tonal__standfirst-background
-    colour(neutral-2), // $tonal__standfirst-text
-    colour(interview-default), // $tonal__standfirst-link
+    colour(interview-default), // $tonal__header-background
+    colour(neutral-6), // $tonal__header-text
+    colour(interview-accent), // $tonal__header-link
+    200, // $tonal__headline-weight
+    #ffffff, // $tonal__headline-colour
+    colour(interview-accent), // $tonal__headline-accent
+    lighten(colour(interview-default), 5%), // $tonal__standfirst-background
+    #ffffff, // $tonal__standfirst-text
+    #ffffff, // $tonal__standfirst-link
     #ffffff, // $tonal__article-background
     colour(interview-default) // $tonal__article-link
 );
-
-/*
-.tonal--tone-interview {
-    .tonal__main {
-        padding-top: 0;
-    }
-
-    .tonal__standfirst {
-        padding-top: 0;
-
-        .content__standfirst {
-            margin-bottom: $gs-baseline;
-        }
-    }
-}
-*/

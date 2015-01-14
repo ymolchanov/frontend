@@ -280,8 +280,8 @@ trait Tags {
     else if (isFeature) Tags.VisualTone.Feature
     else Tags.VisualTone.News
 
-  def isSeriesBlog: Boolean = tags.exists(_.tagType == "series") || 
-    tags.exists({ tag => tag.id != "commentisfree/commentisfree" && tag.tagType == "blog" })
+//  def isSeriesBlog: Boolean = tags.exists(_.tagType == "series") || 
+//    tags.exists({ tag => tag.id != "commentisfree/commentisfree" && tag.tagType == "blog" })
 
   lazy val isLiveBlog: Boolean = tones.exists(t => Tags.liveMappings.contains(t.id))
   lazy val isComment = tones.exists(t => Tags.commentMappings.contains(t.id))

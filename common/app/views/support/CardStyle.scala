@@ -36,8 +36,8 @@ object CardStyle {
       Recipe
     } else if (trail.isInterview) {
       Interview
-    } else if (trail.isSeriesBlog) {
-      SeriesBlog
+//     } else if (trail.isSeriesBlog) {
+//       SeriesBlog
     } else if (trail.isFeature) {
       Feature
     } else {
@@ -98,9 +98,9 @@ case object Recipe extends CardStyle {
   override def toneString: String = "recipe"
 }
 
-case object SeriesBlog extends CardStyle {
-  override def toneString: String = "series-blog"
-}
+//case object SeriesBlog extends CardStyle {
+//  override def toneString: String = "series-blog"
+//}
 
 case object Interview extends CardStyle {
   override def toneString: String = "interview"
