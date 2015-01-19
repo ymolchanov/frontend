@@ -1,16 +1,30 @@
 define([
-    'knockout'
+    'knockout',
+    'modules/authed-ajax'
 ], function (
-    ko
+    ko,
+    authedAjax
 ) {
     ko.bindingHandlers.highcharts = {
-        init: function (element) {
-            console.log(element);
+        init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+            var article = bindingContext.$data,
+                front = article.front,
+                webUrl = article.props.webUrl();
+            if (!front || !webUrl) {
+                return;
+            }
 
-            new Highcharts.SparkLine({
-                chart: {
-                    renderTo: element
+            front.sparklinesFor(webUrl).then(function (series) {
+                if (!series) {
+                    return;
                 }
+
+                new Highcharts.SparkLine({
+                    chart: {
+                        renderTo: element
+                    },
+                    series: series
+                });
             });
         }
     };
@@ -97,13 +111,41 @@ define([
                     negativeColor: '#910000',
                     borderColor: 'silver'
                 }
-            },
-            series: [{
-                data: [2, 4, 5, 9]
-            }]
+            }
         };
         options = Highcharts.merge(defaultOptions, options);
 
         return new Highcharts.Chart(options, callback);
     };
+
+    function getSomething (front, articles) {
+        var deferred = new $.Deferred();
+
+        authedAjax.request({
+            url: 'banana?' + serializeParams(front, articles)
+        }).then(function (data) {
+            return data;
+        }).fail(function (error) {
+            deferred.resolve([{
+                name: 'clickthrough',
+                data: [2, 4, 5, 9]
+            }]);
+        });
+
+        return deferred.promise();
+    }
+
+    return {
+        load: getSomething
+    };
+
+    function serializeParams (front, articles) {
+        var params = [];
+        params.push('referall-url=' + encodeURIComponent('http://theguardian.com/' + front));
+        params.push('urls=' + JSON.stringify(_.map(articles, function (article) {
+            return encodeURIComponent(article);
+        })));
+
+        return params.join('&');
+    }
 });

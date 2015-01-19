@@ -8,7 +8,6 @@ define([
     'utils/human-time',
     'utils/mediator',
     'utils/populate-observables',
-    'utils/sparklines',
     'modules/authed-ajax',
     'modules/modal-dialog',
     'models/group',
@@ -23,7 +22,6 @@ define([
     humanTime,
     mediator,
     populateObservables,
-    sparklines,
     authedAjax,
     modalDialog,
     Group,
@@ -97,7 +95,7 @@ define([
         this.state.isHistoryOpen(this.front.confirmSendingAlert());
 
         this.setPending(true);
-        this.load();
+        this.loadPromise = this.load();
 
         var that = this;
         this.listeners.on('ui:open', function () {

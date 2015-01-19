@@ -8,6 +8,7 @@ define([
     'utils/human-time',
     'utils/mediator',
     'utils/presser',
+    'utils/sparklines',
     'utils/update-scrollables'
 ], function (
     pageConfig,
@@ -18,6 +19,7 @@ define([
     humanTime,
     mediator,
     presser,
+    sparklines,
     updateScrollables
 ) {
     function Front (params) {
@@ -303,7 +305,39 @@ define([
     };
 
     Front.prototype.loadSparklines = function () {
-        this.doNothing = true;
+        var that = this,
+            deferred = new $.Deferred();
+
+        $.when.apply($, _.map(this.collections(), function (collection) {
+            return collection.loadPromise;
+        })).then(function () {
+            var allArticles = [];
+
+            _.each(that.collections(), function (collection) {
+                _.each(collection.groups, function (group) {
+                    _.each(group.items(), function (article) {
+                        var webUrl = article.props.webUrl();
+                        if (webUrl) {
+                            allArticles.push(webUrl);
+                        }
+                    });
+                });
+            });
+
+            sparklines.load(that.front(), allArticles).then(function (data) {
+                deferred.resolve(data);
+            });
+        });
+
+        this.sparklinePromise = deferred.promise();
+    };
+
+    Front.prototype.sparklinesFor = function (article) {
+        return this.sparklinePromise.then(function (data) {
+            // TODO filter by article
+            // console.log('whole data', data);
+            return data;
+        });
     };
 
     Front.prototype.dispose = function () {
