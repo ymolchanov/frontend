@@ -141,9 +141,7 @@
             </div>
 
             <div class="closed" data-bind="ifnot: state.isOpen">
-                <img class="article__spark" data-bind="
-                    visible: state.sparkUrl,
-                    attr: {src: state.sparkUrl}" />
+                <div data-bind="highcharts: true" class="sparkline"></div>
 
                 <div class="article__tools">
                     <a class="tool tool--small tool--small--paste" data-bind="

@@ -170,6 +170,7 @@ define([
         );
 
         this.getFrontAge({alertIfStale: true});
+        this.loadSparklines();
         updateScrollables();
     };
 
@@ -299,6 +300,10 @@ define([
             // return 'Sorry, you can only add links to treats.';
             return false;
         }
+    };
+
+    Front.prototype.loadSparklines = function () {
+        this.doNothing = true;
     };
 
     Front.prototype.dispose = function () {

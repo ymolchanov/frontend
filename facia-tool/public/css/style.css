@@ -1962,6 +1962,12 @@ hr {
     font-weight: bold;
 }
 
+.sparkline {
+    position: absolute;
+    right: 0;
+    top: 15px;
+}
+
 /*****************************************/
 /* MEDIA QUERIES */
 /*****************************************/
