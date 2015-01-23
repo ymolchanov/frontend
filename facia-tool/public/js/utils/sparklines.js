@@ -1,3 +1,4 @@
+/* globals Highcharts, _ */
 define([
     'knockout',
     'modules/authed-ajax'
@@ -8,22 +9,32 @@ define([
     ko.bindingHandlers.highcharts = {
         init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
             var article = bindingContext.$data,
-                front = article.front,
-                webUrl = article.props.webUrl();
-            if (!front || !webUrl) {
+                front = article.front;
+
+            if (!front) {
                 return;
             }
 
-            front.sparklinesFor(webUrl).then(function (series) {
-                if (!series) {
+            front.sparklinePromise.then(function (wholeData) {
+                var webUrl = stripBaseUrl(article.props.webUrl() || ''),
+                    data = ((wholeData || {})[webUrl] || {}).series;
+
+                if (!data || !data.length) {
                     return;
                 }
 
-                new Highcharts.SparkLine({
+                article.sparkline = new Highcharts.SparkLine({
                     chart: {
                         renderTo: element
                     },
-                    series: series
+                    series: _.map(data, function (series) {
+                        return {
+                            name: series.name,
+                            data: _.map(series.data, function (point) {
+                                return point.count;
+                            })
+                        };
+                    })
                 });
             });
         }
@@ -118,34 +129,57 @@ define([
         return new Highcharts.Chart(options, callback);
     };
 
-    function getSomething (front, articles) {
+    function getHistogram (front, articles) {
         var deferred = new $.Deferred();
 
         authedAjax.request({
-            url: 'banana?' + serializeParams(front, articles)
+            url: 'http://api.ophan.co.uk/api/histogram?' + serializeParams(front, articles),
+            dataType: 'jsonp',
+            type: 'jsonp'
         }).then(function (data) {
-            return data;
+            var structured = {};
+
+            _.each(data, function (content) {
+                // var object = content;
+                // object.series = {
+                //     original: content.series
+                // };
+                // _.each(object.series.original, function (series) {
+                //     object.series[series.name] = series.data;
+                // });
+                structured[content.path] = content;
+            });
+
+            deferred.resolve(structured);
         }).fail(function (error) {
-            deferred.resolve([{
-                name: 'clickthrough',
-                data: [2, 4, 5, 9]
-            }]);
+            deferred.reject(error);
         });
 
         return deferred.promise();
     }
 
-    return {
-        load: getSomething
-    };
-
     function serializeParams (front, articles) {
         var params = [];
-        params.push('referall-url=' + encodeURIComponent('http://theguardian.com/' + front));
-        params.push('urls=' + JSON.stringify(_.map(articles, function (article) {
-            return encodeURIComponent(article);
-        })));
+
+        params.push('referring-path=/' + front);
+        _.map(articles, function (article) {
+            return params.push('path=' + stripBaseUrl(article));
+        });
+        params.push('hours=1');
+        params.push('interval=15');
 
         return params.join('&');
     }
+
+    var baseUrl = 'http://www.theguardian.com';
+    function stripBaseUrl (url) {
+        if (url.indexOf(baseUrl) === 0) {
+            return url.substring(baseUrl.length);
+        }
+        return url;
+    }
+
+    return {
+        load: getHistogram
+    };
 });

@@ -309,7 +309,7 @@ define([
             deferred = new $.Deferred();
 
         $.when.apply($, _.map(this.collections(), function (collection) {
-            return collection.loadPromise;
+            return collection.loaded;
         })).then(function () {
             var allArticles = [];
 
@@ -330,14 +330,6 @@ define([
         });
 
         this.sparklinePromise = deferred.promise();
-    };
-
-    Front.prototype.sparklinesFor = function (article) {
-        return this.sparklinePromise.then(function (data) {
-            // TODO filter by article
-            // console.log('whole data', data);
-            return data;
-        });
     };
 
     Front.prototype.dispose = function () {

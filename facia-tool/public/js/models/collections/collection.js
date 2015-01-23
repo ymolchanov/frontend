@@ -95,7 +95,7 @@ define([
         this.state.isHistoryOpen(this.front.confirmSendingAlert());
 
         this.setPending(true);
-        this.loadPromise = this.load();
+        this.loaded = this.load();
 
         var that = this;
         this.listeners.on('ui:open', function () {
@@ -240,17 +240,21 @@ define([
     };
 
     Collection.prototype.load = function(opts) {
-        var self = this;
+        var self = this,
+            deferred = new $.Deferred();
 
         opts = opts || {};
 
-        return authedAjax.request({
+        authedAjax.request({
             url: vars.CONST.apiBase + '/collection/' + this.id
         })
         .done(function(raw) {
             if (opts.isRefresh && self.isPending()) { return; }
 
-            if (!raw) { return; }
+            if (!raw) {
+                self.loaded.resolve();
+                return;
+            }
 
             self.state.hasConcurrentEdits(false);
 
@@ -262,9 +266,14 @@ define([
 
             self.state.timeAgo(self.getTimeAgo(raw.lastUpdated));
         })
+        .fail(function () {
+            self.loaded.resolve();
+        })
         .always(function() {
             self.setPending(false);
         });
+
+        return deferred;
     };
 
     Collection.prototype.registerElement = function (element) {
@@ -284,7 +293,8 @@ define([
 
     Collection.prototype.populate = function(rawCollection) {
         var self = this,
-            list;
+            list,
+            loading = [];
 
         this.raw = rawCollection || this.raw;
 
@@ -305,24 +315,26 @@ define([
                     var group = _.find(self.groups, function(g) {
                         return (parseInt((item.meta || {}).group, 10) || 0) === g.index;
                     }) || self.groups[0];
+                    var article = new Article(_.extend(item, {
+                        group: group,
+                        slimEditor: self.front.slimEditor()
+                    }));
 
-                    group.items.push(
-                        new Article(_.extend(item, {
-                            group: group,
-                            slimEditor: self.front.slimEditor()
-                        }))
-                    );
+                    group.items.push(article);
                 });
 
                 this.populateHistory(this.raw.previously);
                 this.state.lastUpdated(this.raw.lastUpdated);
                 this.state.count(list.length);
-                this.decorate();
+                loading.push(this.decorate());
             }
         }
 
         this.refreshVisibleStories();
         this.setPending(false);
+        $.when.apply($, loading).always(function () {
+            self.loaded.resolve();
+        });
     };
 
     Collection.prototype.populateHistory = function(list) {
@@ -349,10 +361,15 @@ define([
     };
 
     Collection.prototype.decorate = function() {
+        var allItems = [],
+            done;
         _.each(this.groups, function(group) {
-            contentApi.decorateItems(group.items());
+            allItems = allItems.concat(group.items());
         });
+        done = contentApi.decorateItems(allItems);
         contentApi.decorateItems(this.history());
+
+        return done;
     };
 
     Collection.prototype.refresh = function() {
