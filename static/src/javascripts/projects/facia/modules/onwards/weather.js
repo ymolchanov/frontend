@@ -221,6 +221,13 @@ define([
             return weatherData.temperature[this.getUnits()];
         },
 
+        getGuardianTime: function (timeStamp) {
+            var hours = new Date(timeStamp * 1000).getHours(),
+                suffix = (hours >= 12)? 'pm' : 'am';
+
+            return ((hours > 12) ? hours - 12 : hours) + suffix;
+        },
+
         addSearch: function () {
             searchTool = new SearchTool({
                 container: $('.js-search-tool'),
@@ -272,7 +279,7 @@ define([
 
             for (i in forecastData) {
                 $forecast = $.create(template(forecastTemplate, {
-                    'forecast-time': new Date(forecastData[i].epochDateTime * 1000).getHours(),
+                    'forecast-time': this.getGuardianTime(forecastData[i].epochDateTime),
                     'forecast-temp': forecastData[i].temperature[this.getUnits()],
                     'forecast-icon': forecastData[i].weatherIcon,
                     'forecast-desc': forecastData[i].weatherText,
