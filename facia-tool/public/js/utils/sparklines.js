@@ -1,8 +1,10 @@
 /* globals Highcharts, _ */
 define([
+    'modules/vars',
     'knockout',
     'modules/authed-ajax'
 ], function (
+    vars,
     ko,
     authedAjax
 ) {
@@ -130,27 +132,30 @@ define([
     };
 
     function getHistogram (front, articles) {
+        var deferred = new $.Deferred().resolve({});
+
+        // Allow max articles in one request or the GET request is too big
+        var maxArticles = 15;
+        _.each(_.range(0, articles.length, maxArticles), function (limit) {
+            deferred = deferred.then(function (memo) {
+                return reduceRequest(memo, front, articles.slice(limit, Math.min(limit + maxArticles, articles.length - 1)));
+            });
+        });
+
+        return deferred;
+    }
+
+    function reduceRequest (memo, front, articles) {
         var deferred = new $.Deferred();
 
         authedAjax.request({
-            url: 'http://api.ophan.co.uk/api/histogram?' + serializeParams(front, articles),
-            dataType: 'jsonp',
-            type: 'jsonp'
+            url: 'http://api.ophan.co.uk/api/histogram?' + serializeParams(front, articles)
         }).then(function (data) {
-            var structured = {};
-
             _.each(data, function (content) {
-                // var object = content;
-                // object.series = {
-                //     original: content.series
-                // };
-                // _.each(object.series.original, function (series) {
-                //     object.series[series.name] = series.data;
-                // });
-                structured[content.path] = content;
+                memo[content.path] = content;
             });
 
-            deferred.resolve(structured);
+            deferred.resolve(memo);
         }).fail(function (error) {
             deferred.reject(error);
         });
@@ -161,6 +166,7 @@ define([
     function serializeParams (front, articles) {
         var params = [];
 
+        // params.push('api-key=' + vars.CONST.TODOsparksApiKey);
         params.push('referring-path=/' + front);
         _.map(articles, function (article) {
             return params.push('path=' + stripBaseUrl(article));
