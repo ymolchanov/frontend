@@ -334,6 +334,7 @@ define([
         this.setPending(false);
         $.when.apply($, loading).always(function () {
             self.loaded.resolve();
+            mediator.emit('collection:ready', self);
         });
     };
 
@@ -352,19 +353,33 @@ define([
         }, this));
     };
 
-    Collection.prototype.closeAllArticles = function() {
+    Collection.prototype.eachArticle = function (fn) {
         _.each(this.groups, function(group) {
             _.each(group.items(), function(item) {
-                item.close();
+                fn(item, group);
             });
+        });
+    };
+
+    Collection.prototype.contains = function (article) {
+        return _.some(this.groups, function (group) {
+            return _.some(group.items(), function (item) {
+                return item === article;
+            });
+        });
+    };
+
+    Collection.prototype.closeAllArticles = function() {
+        this.eachArticle(function(item) {
+            item.close();
         });
     };
 
     Collection.prototype.decorate = function() {
         var allItems = [],
             done;
-        _.each(this.groups, function(group) {
-            allItems = allItems.concat(group.items());
+        this.eachArticle(function(item) {
+            allItems.push(item);
         });
         done = contentApi.decorateItems(allItems);
         contentApi.decorateItems(this.history());
@@ -380,19 +395,9 @@ define([
         });
     };
 
-    Collection.prototype.refreshSparklines = function() {
-        _.each(this.groups, function(group) {
-            _.each(group.items(), function(item) {
-                item.loadSparkline();
-            });
-        });
-    };
-
     Collection.prototype.refreshRelativeTimes = function() {
-        _.each(this.groups, function(group) {
-            _.each(group.items(), function(item) {
-                item.setRelativeTimes();
-            });
+        this.eachArticle(function(item) {
+            item.setRelativeTimes();
         });
     };
 

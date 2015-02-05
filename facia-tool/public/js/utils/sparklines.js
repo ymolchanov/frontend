@@ -2,48 +2,66 @@
 define([
     'modules/vars',
     'knockout',
-    'modules/authed-ajax'
+    'modules/authed-ajax',
+    'utils/mediator'
 ], function (
     vars,
     ko,
-    authedAjax
+    authedAjax,
+    mediator
 ) {
     ko.bindingHandlers.highcharts = {
         init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
-            var article = bindingContext.$data,
-                front = article.front;
+            var article = bindingContext.$data;
 
-            if (!front) {
-                return;
-            }
-
-            front.sparklinePromise.then(function (wholeData) {
-                var webUrl = stripBaseUrl(article.props.webUrl() || ''),
-                    data = ((wholeData || {})[webUrl] || {}).series;
-
-                if (!data || !data.length) {
-                    return;
+            var listener = function (collection) {
+                if (collection.contains(article)) {
+                    refreshSparklines(article, element);
                 }
+            };
+            mediator.on('collection:ready', listener);
 
-                article.sparkline = new Highcharts.SparkLine({
-                    chart: {
-                        renderTo: element
-                    },
-                    series: _.map(data, function (series) {
-                        return {
-                            name: series.name,
-                            data: _.map(series.data, function (point) {
-                                return point.count;
-                            })
-                        };
-                    })
-                });
+            ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                mediator.off('collection:ready', listener);
             });
         }
     };
 
-    Highcharts.SparkLine = function (options, callback) {
-        var defaultOptions = {
+    function refreshSparklines (article, element) {
+        var front = article.front;
+
+        if (!front) {
+            return;
+        }
+
+        front.sparklinePromise.then(function (wholeData) {
+            var webUrl = stripBaseUrl(article.props.webUrl() || ''),
+                data = ((wholeData || {})[webUrl] || {}),
+                series = data.series;
+
+            if (!series || !series.length) {
+                return;
+            }
+
+            article.sparkline = new Highcharts.SparkLine({
+                chart: {
+                    renderTo: element
+                },
+                series: _.map(series, function (value) {
+                    return {
+                        name: value.name,
+                        data: _.map(value.data, function (point) {
+                            return point.count;
+                        })
+                    };
+                })
+            }, data.totalHits);
+        });
+    }
+
+    Highcharts.SparkLine = function (options, hits, callback) {
+        var lineWidth = Math.min(Math.ceil(hits / 10), 4),
+            defaultOptions = {
             chart: {
                 renderTo: (options.chart && options.chart.renderTo) || this,
                 backgroundColor: null,
@@ -51,14 +69,19 @@ define([
                 type: 'area',
                 margin: [0, 0, 0, 0],
                 width: 125,
-                height: 30,
+                height: 34,
                 style: {
                     overflow: 'visible'
                 },
                 skipClone: true
             },
             title: {
-                text: ''
+                text: '' + hits,
+                style: {
+                    fontSize: '10px'
+                },
+                align: 'left',
+                verticalAlign: 'top'
             },
             credits: {
                 enabled: false
@@ -103,7 +126,7 @@ define([
             plotOptions: {
                 series: {
                     animation: false,
-                    lineWidth: 1,
+                    lineWidth: lineWidth,
                     shadow: false,
                     states: {
                         hover: {
@@ -111,14 +134,21 @@ define([
                         }
                     },
                     marker: {
-                        radius: 1,
-                        states: {
-                            hover: {
-                                radius: 2
-                            }
-                        }
+                        radius: 1
                     },
-                    fillOpacity: 0.25
+                    fillOpacity: 0.2,
+                    dataLabels: {
+                        enabled: true,
+                        formatter: function () {
+                            if (this.y) {
+                                return this.y + '<br>' + (this.y / hits * 100).toFixed(1)+ '%';
+                            }
+                        },
+                        style: {
+                            fontSize: '7px'
+                        },
+                        useHTML: true
+                    }
                 },
                 column: {
                     negativeColor: '#910000',

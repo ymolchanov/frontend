@@ -223,13 +223,9 @@ define([
         }, period));
     };
     Front.prototype.refreshSparklines = function (period) {
-        var length = this.collections().length || 1, model = this;
+        var model = this;
         this.setIntervals.push(setInterval(function () {
-            model.collections().forEach(function (list, index) {
-                model.setTimeouts.push(setTimeout(function() {
-                    list.refreshSparklines();
-                }, index * period / length)); // stagger requests
-            });
+            model.loadSparklines();
         }, period));
     };
     Front.prototype.refreshRelativeTimes = function (period) {
@@ -314,13 +310,11 @@ define([
             var allArticles = [];
 
             _.each(that.collections(), function (collection) {
-                _.each(collection.groups, function (group) {
-                    _.each(group.items(), function (article) {
-                        var webUrl = article.props.webUrl();
-                        if (webUrl) {
-                            allArticles.push(webUrl);
-                        }
-                    });
+                collection.eachArticle(function (article) {
+                    var webUrl = article.props.webUrl();
+                    if (webUrl) {
+                        allArticles.push(webUrl);
+                    }
                 });
             });
 
