@@ -179,7 +179,7 @@ define([
         var deferred = new $.Deferred();
 
         authedAjax.request({
-            url: 'http://api.ophan.co.uk/api/histogram?' + serializeParams(front, articles)
+            url: '/ophan/histogram?' + serializeParams(front, articles)
         }).then(function (data) {
             _.each(data, function (content) {
                 memo[content.path] = content;
@@ -196,7 +196,6 @@ define([
     function serializeParams (front, articles) {
         var params = [];
 
-        // params.push('api-key=' + vars.CONST.TODOsparksApiKey);
         params.push('referring-path=/' + front);
         _.map(articles, function (article) {
             return params.push('path=' + stripBaseUrl(article));

@@ -1,4 +1,3 @@
-/* global _: true */
 define([
     'knockout',
     'config',
@@ -81,31 +80,15 @@ define([
         ophanBase:             'http://dashboard.ophan.co.uk/graph/breakdown',
         ophanFrontBase:        'http://dashboard.ophan.co.uk/info?path=',
 
-        sparksServer:          'http://sparklines.ophan.co.uk',
-        sparksParams: {
-            graphs: 'other:3279F1,google:65b045,guardian:376ABF',
-            showStats: 1,
-            showHours: 1,
-            width: 100,
-            height: 35
-        },
-        TODOsparksApiKey:      'asdasda',
-
         internalContentPrefix: 'internal-code/content/'
     };
-
-    function sparksBaseUrl(args) {
-        return CONST.sparksServer + '/png?' + _.map(args, function(v,k) { return k + '=' + v; }).join('&') + '&page=/';
-    }
 
     return {
         CONST: CONST,
         model: undefined,
-        sparksBase: sparksBaseUrl(CONST.sparksParams),
         priority: pageConfig.priority === 'editorial' ? undefined : pageConfig.priority,
         state: {
-            config: {},
-            openFronts: {}
+            config: {}
         }
     };
 });

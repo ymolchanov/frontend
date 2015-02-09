@@ -53,4 +53,23 @@ object FaciaContentApiProxy extends Controller with Logging with AuthLogging wit
       }
     }
   }
+
+  def ophan(path: String) = ExpiringActions.ExpiringAuthAction.async { request =>
+    FaciaToolMetrics.ProxyCount.increment()
+    val queryString = request.queryString.filter(_._2.exists(_.nonEmpty)).map { p =>
+       "%s=%s".format(p._1, p._2.head.urlEncoded)
+    }.mkString("&")
+
+    val ophanApiHost = Configuration.ophanApi.host.get
+
+    val url = s"$ophanApiHost/$path?$queryString${Configuration.ophanApi.key.map(key => s"&api-key=$key").getOrElse("")}"
+
+    log("Proxying ophan request to: %s" format url, request)
+
+    WS.url(url).withPreviewAuth.get().map { response =>
+      Cached(60) {
+        Ok(response.body).as("application/json")
+      }
+    }
+  }
 }
