@@ -60,7 +60,7 @@ define([
     }
 
     Highcharts.SparkLine = function (options, hits, callback) {
-        var lineWidth = Math.min(Math.ceil(hits / 10), 4),
+        var lineWidth = Math.min(Math.ceil(hits / 2000), 4),
             defaultOptions = {
             chart: {
                 renderTo: (options.chart && options.chart.renderTo) || this,
@@ -80,8 +80,8 @@ define([
                 style: {
                     fontSize: '10px'
                 },
-                align: 'left',
-                verticalAlign: 'top'
+                align: 'right',
+                verticalAlign: 'bottom'
             },
             credits: {
                 enabled: false
@@ -138,7 +138,7 @@ define([
                     },
                     fillOpacity: 0.2,
                     dataLabels: {
-                        enabled: true,
+                        enabled: false,
                         formatter: function () {
                             if (this.y) {
                                 return this.y + '<br>' + (this.y / hits * 100).toFixed(1)+ '%';
@@ -201,7 +201,7 @@ define([
             return params.push('path=' + stripBaseUrl(article));
         });
         params.push('hours=1');
-        params.push('interval=15');
+        params.push('interval=10');
 
         return params.join('&');
     }
