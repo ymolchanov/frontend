@@ -10,6 +10,10 @@ define([
     authedAjax,
     mediator
 ) {
+    var subscribedFronts = [],
+        pollingId,
+        pollingPeriod = vars.CONST.sparksRefreshMs || 60000;
+
     ko.bindingHandlers.highcharts = {
         init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
             var article = bindingContext.$data;
@@ -26,6 +30,45 @@ define([
             });
         }
     };
+
+    function loadSparklines (front) {
+        if (!front.front()) {
+            return;
+        }
+
+        var deferred = new $.Deferred(),
+            referrerFront = front.front();
+
+        $.when.apply($, _.map(front.collections(), function (collection) {
+            return collection.loaded;
+        })).then(function () {
+            if (referrerFront !== front.front()) {
+                // The user switched to another front
+                deferred.reject();
+                return;
+            }
+            var allArticles = [];
+
+            _.each(front.collections(), function (collection) {
+                collection.eachArticle(function (article) {
+                    var webUrl = article.props.webUrl();
+                    if (webUrl) {
+                        allArticles.push(webUrl);
+                    }
+                });
+            });
+
+            getHistogram(front.front(), allArticles).then(function (data) {
+                if (referrerFront !== front.front()) {
+                    deferred.reject();
+                } else {
+                    deferred.resolve(data);
+                }
+            });
+        });
+
+        front.sparklinePromise = deferred.promise();
+    }
 
     function refreshSparklines (article, element) {
         var front = article.front;
@@ -165,7 +208,7 @@ define([
         var deferred = new $.Deferred().resolve({});
 
         // Allow max articles in one request or the GET request is too big
-        var maxArticles = 15;
+        var maxArticles = vars.CONST.sparksBatchQueue;
         _.each(_.range(0, articles.length, maxArticles), function (limit) {
             deferred = deferred.then(function (memo) {
                 return reduceRequest(memo, front, articles.slice(limit, Math.min(limit + maxArticles, articles.length - 1)));
@@ -214,7 +257,42 @@ define([
         return url;
     }
 
+    function startPolling () {
+        if (!pollingId) {
+            setInterval(function () {
+                _.each(subscribedFronts, function (front) {
+                    loadSparklines(front);
+                });
+            }, pollingPeriod);
+        }
+    }
+
+    function stopPolling () {
+        if (pollingId) {
+            clearInterval(pollingId);
+        }
+    }
+
+    function subscribe (widget) {
+        if (subscribedFronts.length === 0) {
+            startPolling();
+        }
+        subscribedFronts.push(widget);
+        loadSparklines(widget);
+        widget.collections.subscribe(function () {
+            loadSparklines(widget);
+        });
+    }
+
+    function unsubscribe (widget) {
+        subscribedFronts = _.without(subscribedFronts, widget);
+        if (subscribedFronts.length === 0) {
+            stopPolling();
+        }
+    }
+
     return {
-        load: getHistogram
+        subscribe: subscribe,
+        unsubscribe: unsubscribe
     };
 });

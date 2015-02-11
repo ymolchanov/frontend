@@ -134,10 +134,10 @@ define([
         this.setIntervals = [];
         this.setTimeouts = [];
         this.refreshCollections(vars.CONST.collectionsPollMs || 60000);
-        this.refreshSparklines(vars.CONST.sparksRefreshMs || 60000);
         this.refreshRelativeTimes(vars.CONST.pubTimeRefreshMs || 60000);
 
         this.load(frontId);
+        sparklines.subscribe(this);
         mediator.emit('front:loaded', this);
     }
 
@@ -172,7 +172,6 @@ define([
         );
 
         this.getFrontAge({alertIfStale: true});
-        this.loadSparklines();
         updateScrollables();
     };
 
@@ -220,12 +219,6 @@ define([
                     list.refresh();
                 }, index * period / length)); // stagger requests
             });
-        }, period));
-    };
-    Front.prototype.refreshSparklines = function (period) {
-        var model = this;
-        this.setIntervals.push(setInterval(function () {
-            model.loadSparklines();
         }, period));
     };
     Front.prototype.refreshRelativeTimes = function (period) {
@@ -300,32 +293,6 @@ define([
         }
     };
 
-    Front.prototype.loadSparklines = function () {
-        var that = this,
-            deferred = new $.Deferred();
-
-        $.when.apply($, _.map(this.collections(), function (collection) {
-            return collection.loaded;
-        })).then(function () {
-            var allArticles = [];
-
-            _.each(that.collections(), function (collection) {
-                collection.eachArticle(function (article) {
-                    var webUrl = article.props.webUrl();
-                    if (webUrl) {
-                        allArticles.push(webUrl);
-                    }
-                });
-            });
-
-            sparklines.load(that.front(), allArticles).then(function (data) {
-                deferred.resolve(data);
-            });
-        });
-
-        this.sparklinePromise = deferred.promise();
-    };
-
     Front.prototype.dispose = function () {
         this.listeners.dispose();
         _.each(this.setIntervals, function (timeout) {
@@ -334,6 +301,7 @@ define([
         _.each(this.setTimeouts, function (timeout) {
             clearTimeout(timeout);
         });
+        sparklines.unsubscribe(this);
         mediator.emit('front:disposed', this);
     };
 

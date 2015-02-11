@@ -80,7 +80,9 @@ define([
         ophanBase:             'http://dashboard.ophan.co.uk/graph/breakdown',
         ophanFrontBase:        'http://dashboard.ophan.co.uk/info?path=',
 
-        internalContentPrefix: 'internal-code/content/'
+        internalContentPrefix: 'internal-code/content/',
+
+        sparksBatchQueue:      15
     };
 
     return {
