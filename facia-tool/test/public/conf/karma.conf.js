@@ -9,6 +9,7 @@ module.exports = function(config) {
         {pattern: 'public/js/components/curl/dist/curl-with-js-and-domReady/curl.js', included: true, watched: false},
         {pattern: 'public/js/components/underscore/underscore-min.js', included: true, watched: false},
         {pattern: '../static/test/javascripts/components/sinonjs/sinon.js', included: true, watched: false},
+        {pattern: 'public/js/components/highcharts/js/highcharts.js', included: true, watched: false},
         {pattern: 'public/js/**/*', included: false},
         {pattern: 'public/css/*.css', included: true, watched: false},
         {pattern: 'public/css/!(*.css)', included: false, watched: false},
